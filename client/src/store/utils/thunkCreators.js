@@ -5,8 +5,10 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  viewUnreadMessages,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
+import { setActiveChat } from "../activeConversation";
 
 axios.interceptors.request.use(async function (config) {
   const token = await localStorage.getItem("messenger-token");
@@ -83,6 +85,11 @@ const saveMessage = async (body) => {
   return data;
 };
 
+const viewMessages = async (body) => {
+  const { data } = await axios.put("/api/messages", body);
+  return data;
+};
+
 const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
@@ -101,10 +108,20 @@ export const postMessage = (body) => async (dispatch) => {
     } else {
       dispatch(setNewMessage(data.message));
     }
-
     sendMessage(data, body);
   } catch (error) {
     console.error(error);
+  }
+};
+
+//create a thunk to send dispatch read messages updates to the store
+export const viewUnreadMessagesAsync = (body, id) => async (dispatch) => {
+  dispatch(setActiveChat(id));
+  try {
+    const data = await viewMessages(body);
+    dispatch(viewUnreadMessages(data));
+  } catch (error) {
+    console.log(error);
   }
 };
 

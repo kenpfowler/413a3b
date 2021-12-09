@@ -2,8 +2,8 @@ import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
-import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import { viewUnreadMessagesAsync } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,22 +14,30 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     "&:hover": {
-      cursor: "grab"
-    }
-  }
+      cursor: "grab",
+    },
+  },
 }));
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, viewUnreadMessagesAsync } = props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation.otherUser.username);
+    const { id } = conversation.otherUser;
+    const body = {
+      otherUserId: id,
+      conversationId: conversation.id,
+    };
+    await viewUnreadMessagesAsync(body, conversation.otherUser.username);
   };
 
   return (
-    <Box onClick={() => handleClick(conversation)} className={classes.root}>
+    <Box
+      onClick={async () => await handleClick(conversation)}
+      className={classes.root}
+    >
       <BadgeAvatar
         photoUrl={otherUser.photoUrl}
         username={otherUser.username}
@@ -43,9 +51,9 @@ const Chat = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
-    }
+    viewUnreadMessagesAsync: (body, id) => {
+      dispatch(viewUnreadMessagesAsync(body, id));
+    },
   };
 };
 
