@@ -23,7 +23,7 @@ export const addMessageToStore = (state, payload) => {
   });
 };
 
-export const updateIsUnreadMessages = (state, payload) => {
+export const updateisReadMessages = (state, payload) => {
   const messages = payload;
   const convoToMatch = messages[0].conversationId;
 

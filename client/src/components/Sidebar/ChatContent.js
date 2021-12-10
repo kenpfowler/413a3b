@@ -77,7 +77,7 @@ const ChatContent = (props) => {
     unreadMessages = messages
       .map((message) => {
         if (message.senderId === conversation.otherUser.id) {
-          return message.isUnread ? 1 : 0;
+          return message.isRead ? 0 : 1;
         } else {
           return 0;
         }
