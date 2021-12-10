@@ -57,7 +57,7 @@ router.put("/", async (req, res, next) => {
     const { otherUserId, conversationId } = req.body;
 
     if (!conversationId) {
-      return;
+      return res.sendStatus(404);
     }
 
     await Message.update(

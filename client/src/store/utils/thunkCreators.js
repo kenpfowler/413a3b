@@ -121,7 +121,7 @@ export const viewUnreadMessagesAsync = (body, id) => async (dispatch) => {
     const data = await viewMessages(body);
     dispatch(viewUnreadMessages(data));
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
