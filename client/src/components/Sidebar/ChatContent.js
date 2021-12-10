@@ -1,10 +1,9 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, Badge } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    position: "relative",
     display: "flex",
     justifyContent: "space-between",
     marginLeft: 20,
@@ -25,44 +24,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17,
-  },
-  notificationBubble: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "10px",
-    backgroundColor: "#3F92FF",
-    minWidth: "20px",
-    height: "20px",
-    position: "absolute",
-    left: "86.67%",
-    right: "6.67%",
-    top: "37.5%",
-    bottom: "37.5%",
-  },
-
-  largeNotificationBubble: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "10px",
-    backgroundColor: "#3F92FF",
-    minWidth: "20px",
-    width: "30px",
-    height: "20px",
-    position: "absolute",
-    left: "86.67%",
-    right: "6.67%",
-    top: "37.5%",
-    bottom: "37.5%",
-  },
-
-  notificationBubbleText: {
-    fontFamily: "Open Sans",
-    fontStyle: "normal",
-    fontWeight: "bold",
-    fontSize: "10px",
-    color: "#FFFFFF",
   },
 }));
 
@@ -101,19 +62,11 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {unreadMessages > 0 ? (
-        <div
-          className={
-            unreadMessages > 9
-              ? classes.largeNotificationBubble
-              : classes.notificationBubble
-          }
-        >
-          <Typography className={classes.notificationBubbleText}>
-            {unreadMessages}
-          </Typography>
-        </div>
-      ) : null}
+      <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
+        {unreadMessages.length !== 0 && (
+          <Badge badgeContent={unreadMessages} color="primary" />
+        )}
+      </Box>
     </Box>
   );
 };
