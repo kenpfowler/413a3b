@@ -99,10 +99,6 @@ const sendMessage = (data, body) => {
 };
 
 const updateIsUnreadCount = (conversationId, isUnreadCount) => {
-  console.log("2. DATA FROM updateIsUnreadCount emitter", {
-    conversationId,
-    isUnreadCount,
-  });
   socket.emit("update-unread-messages", {
     conversationId,
     isUnreadCount,
@@ -120,7 +116,6 @@ export const postMessage = (body) => async (dispatch) => {
       dispatch(setNewMessage(data.message));
     }
     sendMessage(data, body);
-    console.log("1. DATA FROM POST MESSAGE", { data, body });
     updateIsUnreadCount(body.conversationId, data.isUnreadCount);
   } catch (error) {
     console.error(error);
