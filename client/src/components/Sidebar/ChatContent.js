@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    flexDirection: "row",
     justifyContent: "space-between",
     marginLeft: 20,
     flexGrow: 1,
@@ -31,22 +32,7 @@ const ChatContent = (props) => {
   const classes = useStyles();
 
   const { conversation } = props;
-  const { latestMessageText, otherUser, messages } = conversation;
-  let unreadMessages;
-
-  if (conversation.messages.length !== 0) {
-    unreadMessages = messages
-      .map((message) => {
-        if (message.senderId === conversation.otherUser.id) {
-          return message.isRead ? 0 : 1;
-        } else {
-          return 0;
-        }
-      })
-      .reduce((previousValue, currentValue) => previousValue + currentValue);
-  } else {
-    unreadMessages = [];
-  }
+  const { latestMessageText, otherUser, isUnreadCount } = conversation;
 
   return (
     <Box className={classes.root}>
@@ -56,16 +42,18 @@ const ChatContent = (props) => {
         </Typography>
         <Typography
           className={
-            unreadMessages ? classes.unreadPreviewText : classes.previewText
+            isUnreadCount ? classes.unreadPreviewText : classes.previewText
           }
         >
           {latestMessageText}
         </Typography>
       </Box>
       <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
-        {unreadMessages.length !== 0 && (
-          <Badge badgeContent={unreadMessages} color="primary" />
-        )}
+        <Badge
+          badgeContent={isUnreadCount}
+          color="primary"
+          style={{ marginRight: "40px" }}
+        />
       </Box>
     </Box>
   );

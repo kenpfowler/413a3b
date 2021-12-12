@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { Conversation, Message } = require("../../db/models");
+const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
@@ -19,7 +20,19 @@ router.post("/", async (req, res, next) => {
         conversationId,
         isRead,
       });
-      return res.json({ message: message, sender: sender });
+
+      const isUnreadCount = await Message.count({
+        where: {
+          senderId: { [Op.not]: recipientId },
+          conversationId: { [Op.eq]: conversationId },
+          isRead: { [Op.eq]: false },
+        },
+      });
+      return res.json({
+        message: message,
+        sender: sender,
+        isUnreadCount: isUnreadCount,
+      });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
@@ -43,7 +56,20 @@ router.post("/", async (req, res, next) => {
       conversationId: conversation.id,
       isRead,
     });
-    res.json({ message: message, sender: sender });
+
+    const isUnreadCount = await Message.count({
+      where: {
+        senderId: { [Op.not]: recipientId },
+        conversationId: { [Op.eq]: conversationId },
+        isRead: { [Op.eq]: false },
+      },
+    });
+
+    res.json({
+      message: message,
+      sender: sender,
+      isUnreadCount: isUnreadCount,
+    });
   } catch (error) {
     next(error);
   }
@@ -72,7 +98,15 @@ router.put("/", async (req, res, next) => {
       order: [["createdAt", "ASC"]],
     });
 
-    res.json(updated);
+    const checkUnread = await Message.findAndCountAll({
+      where: {
+        conversationId: conversationId,
+        senderId: otherUserId,
+        isRead: false,
+      },
+    });
+
+    res.json({ updated: updated, count: checkUnread.count });
   } catch (error) {
     next(error);
   }

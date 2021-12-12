@@ -46,6 +46,7 @@ router.get("/", async (req, res, next) => {
         },
       ],
     });
+
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
@@ -70,6 +71,15 @@ router.get("/", async (req, res, next) => {
       convoJSON.latestMessageText = convoJSON.messages[0].text;
       convoJSON.messages.reverse();
 
+      const isUnreadCount = await Message.count({
+        where: {
+          senderId: { [Op.eq]: convoJSON.otherUser.id },
+          conversationId: { [Op.eq]: convoJSON.id },
+          isRead: { [Op.eq]: false },
+        },
+      });
+
+      convoJSON.isUnreadCount = isUnreadCount;
       conversations[i] = convoJSON;
     }
 
