@@ -47,6 +47,14 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("update-unread-messages", (data) => {
+    console.log("3. DATA RECEIVED BY SEVER LISTENER", data);
+    socket.broadcast.emit("update-unread-messages", {
+      conversationId: data.conversationId,
+      isUnreadCount: data.isUnreadCount,
+    });
+  });
+
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
       userIndex = onlineUsers.indexOf(id);
