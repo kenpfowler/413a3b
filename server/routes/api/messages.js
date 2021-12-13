@@ -98,15 +98,15 @@ router.put("/", async (req, res, next) => {
       order: [["createdAt", "ASC"]],
     });
 
-    const checkUnread = await Message.findAndCountAll({
+    const isUnreadCount = await Message.count({
       where: {
-        conversationId: conversationId,
-        senderId: otherUserId,
-        isRead: false,
+        senderId: { [Op.eq]: otherUserId },
+        conversationId: { [Op.eq]: conversationId },
+        isRead: { [Op.eq]: false },
       },
     });
 
-    res.json({ updated: updated, count: checkUnread.count });
+    res.json({ updated: updated, isUnreadCount: isUnreadCount });
   } catch (error) {
     next(error);
   }
