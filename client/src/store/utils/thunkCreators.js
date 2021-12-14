@@ -130,6 +130,9 @@ export const viewUnreadMessagesAsync = (body, id) => async (dispatch) => {
   try {
     const data = await viewMessages(body);
     dispatch(viewUnreadMessages(data));
+    socket.emit("message-recieved", {
+      updated: data.updated,
+    });
   } catch (error) {
     console.error(error);
   }

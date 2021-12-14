@@ -25,8 +25,8 @@ const Messages = (props) => {
         const time = moment(message.createdAt).format("h:mm");
 
         return message.senderId === userId ? (
-          <Box className={classes.root}>
-            <SenderBubble key={message.id} text={message.text} time={time} />
+          <Box key={message.id} className={classes.root}>
+            <SenderBubble text={message.text} time={time} />
             {message.id === myLastMessageId && message.isRead && (
               <Avatar
                 className={classes.avatar}

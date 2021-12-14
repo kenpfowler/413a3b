@@ -7,6 +7,7 @@ import {
   updateisReadMessages,
   updateIsUnreadCount,
   setLastSentMessage,
+  updateNotificationReadMessages,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -21,6 +22,7 @@ const ADD_CONVERSATION = "ADD_CONVERSATION";
 const VIEW_UNREAD_MESSAGES = "VIEW_UNREAD_MESSAGES";
 const SET_IS_UNREAD_COUNT = "SET_IS_UNREAD_COUNT";
 const SET_LAST_SENT_MESSAGE = "SET_LAST_SENT_MESSAGE";
+const NOTIFY_VIEWED_MESSAGES = "NOTIFY_VIEWED_MESSAGES";
 
 // ACTION CREATORS
 
@@ -94,12 +96,21 @@ export const viewUnreadMessages = (viewedMessages) => {
   };
 };
 
+export const notifyViewedMessages = (viewed) => {
+  return {
+    type: NOTIFY_VIEWED_MESSAGES,
+    payload: viewed.msg.updated,
+  };
+};
+
 // REDUCER
 
 const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
       return action.conversations;
+    case NOTIFY_VIEWED_MESSAGES:
+      return updateNotificationReadMessages(state, action.payload);
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case VIEW_UNREAD_MESSAGES:

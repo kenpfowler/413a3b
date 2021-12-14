@@ -5,6 +5,7 @@ import {
   removeOfflineUser,
   addOnlineUser,
   setIsUnreadCount,
+  notifyViewedMessages,
 } from "./store/conversations";
 
 import { viewMessages } from "./store/utils/thunkCreators";
@@ -48,10 +49,6 @@ socket.on("connect", () => {
     }
 
     if (otherUserName === activeConversation) {
-      const body = {
-        otherUserId: currentConvo.otherUser.id,
-        conversationId: data.message.id,
-      };
       data.isRead = true;
       store.dispatch(setNewMessage(data.message, data.sender));
     } else {
@@ -86,12 +83,22 @@ socket.on("connect", () => {
         conversationId: data.conversationId,
       };
       let viewed = await viewMessages(body);
+
       store.dispatch(
         setIsUnreadCount(data.conversationId, viewed.isUnreadCount)
       );
+      socket.emit("message-recieved", {
+        updated: viewed.updated,
+      });
     } else {
       store.dispatch(setIsUnreadCount(data.conversationId, data.isUnreadCount));
     }
+  });
+
+  socket.on("message-recieved", (data) => {
+    console.log("message-recieved-event: Client Side", data);
+    store.dispatch(notifyViewedMessages(data));
+    //data looks like: msg { updated: [updated-array]}
   });
 });
 

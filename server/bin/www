@@ -54,6 +54,12 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("message-recieved", (data) => {
+    socket.broadcast.emit("message-recieved", {
+      updated: data.updated,
+    });
+  });
+
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
       userIndex = onlineUsers.indexOf(id);
