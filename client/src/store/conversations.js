@@ -99,7 +99,7 @@ export const viewUnreadMessages = (viewedMessages) => {
 export const notifyViewedMessages = (viewed) => {
   return {
     type: NOTIFY_VIEWED_MESSAGES,
-    payload: viewed.msg.updated,
+    payload: viewed.updated,
   };
 };
 
