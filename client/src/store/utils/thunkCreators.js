@@ -6,6 +6,7 @@ import {
   setNewMessage,
   setSearchedUsers,
   viewUnreadMessages,
+  getLastSentMessage,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 import { setActiveChat } from "../activeConversation";
@@ -115,8 +116,9 @@ export const postMessage = (body) => async (dispatch) => {
     } else {
       dispatch(setNewMessage(data.message));
     }
+    dispatch(getLastSentMessage(data.message.id, data.message.conversationId));
     sendMessage(data, body);
-    updateIsUnreadCount(body.conversationId, data.isUnreadCount);
+    updateIsUnreadCount(data.message.conversationId, data.isUnreadCount);
   } catch (error) {
     console.error(error);
   }

@@ -109,3 +109,16 @@ export const updateIsUnreadCount = (state, payload) => {
     }
   });
 };
+
+export const setLastSentMessage = (state, payload) => {
+  const { lastMessageId, conversationId } = payload;
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const convoCopy = { ...convo };
+      convoCopy.myLastMessageId = lastMessageId;
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};

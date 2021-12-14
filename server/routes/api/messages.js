@@ -50,17 +50,18 @@ router.post("/", async (req, res, next) => {
         sender.online = true;
       }
     }
+
     const message = await Message.create({
       senderId,
-      text,
+      text: text,
       conversationId: conversation.id,
-      isRead,
+      isRead: false,
     });
 
     const isUnreadCount = await Message.count({
       where: {
         senderId: { [Op.not]: recipientId },
-        conversationId: { [Op.eq]: conversationId },
+        conversationId: { [Op.eq]: conversation.id },
         isRead: { [Op.eq]: false },
       },
     });

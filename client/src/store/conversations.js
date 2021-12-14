@@ -6,6 +6,7 @@ import {
   addMessageToStore,
   updateisReadMessages,
   updateIsUnreadCount,
+  setLastSentMessage,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -19,8 +20,16 @@ const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const VIEW_UNREAD_MESSAGES = "VIEW_UNREAD_MESSAGES";
 const SET_IS_UNREAD_COUNT = "SET_IS_UNREAD_COUNT";
+const SET_LAST_SENT_MESSAGE = "SET_LAST_SENT_MESSAGE";
 
 // ACTION CREATORS
+
+export const getLastSentMessage = (lastMessageId, conversationId) => {
+  return {
+    type: SET_LAST_SENT_MESSAGE,
+    payload: { lastMessageId, conversationId },
+  };
+};
 
 export const gotConversations = (conversations) => {
   return {
@@ -95,6 +104,8 @@ const reducer = (state = [], action) => {
       return addMessageToStore(state, action.payload);
     case VIEW_UNREAD_MESSAGES:
       return updateisReadMessages(state, action.payload);
+    case SET_LAST_SENT_MESSAGE:
+      return setLastSentMessage(state, action.payload);
     case SET_IS_UNREAD_COUNT:
       return updateIsUnreadCount(state, action.payload);
     case ADD_ONLINE_USER:

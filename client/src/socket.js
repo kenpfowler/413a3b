@@ -25,11 +25,18 @@ socket.on("connect", () => {
     const activeConversation = store.getState().activeConversation;
     let otherUserName;
     let currentConvo;
+
     if (activeConversation) {
       otherUserName = store
         .getState()
-        .conversations.find((convo) => convo.id === data.message.conversationId)
-        .otherUser.username;
+        .conversations.find(
+          (convo) => convo.id === data.message.conversationId
+        );
+
+      if (otherUserName) {
+        otherUserName = otherUserName.otherUser.username;
+      }
+
       currentConvo = store
         .getState()
         .conversations.find(
@@ -45,9 +52,7 @@ socket.on("connect", () => {
         otherUserId: currentConvo.otherUser.id,
         conversationId: data.message.id,
       };
-      let viewed = await viewMessages(body);
       data.isRead = true;
-      console.log("FROM IN CONVO FROM SENDER TEST", { viewed, body, data });
       store.dispatch(setNewMessage(data.message, data.sender));
     } else {
       store.dispatch(setNewMessage(data.message, data.sender));
@@ -61,8 +66,12 @@ socket.on("connect", () => {
     if (activeConversation) {
       otherUserName = store
         .getState()
-        .conversations.find((convo) => convo.id === data.conversationId)
-        .otherUser.username;
+        .conversations.find((convo) => convo.id === data.conversationId);
+
+      if (otherUserName) {
+        otherUserName = otherUserName.otherUser.username;
+      }
+
       currentConvo = store
         .getState()
         .conversations.find((convo) => convo.id === data.conversationId);

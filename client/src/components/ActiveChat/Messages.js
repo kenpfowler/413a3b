@@ -1,10 +1,23 @@
 import React from "react";
-import { Box } from "@material-ui/core";
+import { Avatar, Box, makeStyles } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import moment from "moment";
 
+const useStyles = makeStyles(() => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+  avatar: {
+    height: 25,
+    width: 25,
+  },
+}));
+
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { messages, otherUser, userId, myLastMessageId } = props;
+  const classes = useStyles();
 
   return (
     <Box>
@@ -12,7 +25,16 @@ const Messages = (props) => {
         const time = moment(message.createdAt).format("h:mm");
 
         return message.senderId === userId ? (
-          <SenderBubble key={message.id} text={message.text} time={time} />
+          <Box className={classes.root}>
+            <SenderBubble key={message.id} text={message.text} time={time} />
+            {message.id === myLastMessageId && message.isRead && (
+              <Avatar
+                className={classes.avatar}
+                src={otherUser.photoUrl}
+                alt={otherUser.username}
+              />
+            )}
+          </Box>
         ) : (
           <OtherUserBubble
             key={message.id}
