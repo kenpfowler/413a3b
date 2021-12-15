@@ -5,8 +5,11 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  viewUnreadMessages,
+  getLastSentMessage,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
+import { setActiveChat } from "../activeConversation";
 
 axios.interceptors.request.use(async function (config) {
   const token = await localStorage.getItem("messenger-token");
@@ -78,8 +81,13 @@ export const fetchConversations = () => async (dispatch) => {
   }
 };
 
-const saveMessage = async (body) => {
+export const saveMessage = async (body) => {
   const { data } = await axios.post("/api/messages", body);
+  return data;
+};
+
+export const viewMessages = async (body) => {
+  const { data } = await axios.put("/api/messages", body);
   return data;
 };
 
@@ -88,6 +96,13 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+  });
+};
+
+const updateIsUnreadCount = (conversationId, isUnreadCount) => {
+  socket.emit("update-unread-messages", {
+    conversationId,
+    isUnreadCount,
   });
 };
 
@@ -101,8 +116,23 @@ export const postMessage = (body) => async (dispatch) => {
     } else {
       dispatch(setNewMessage(data.message));
     }
-
+    dispatch(getLastSentMessage(data.message.id, data.message.conversationId));
     sendMessage(data, body);
+    updateIsUnreadCount(data.message.conversationId, data.isUnreadCount);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//create a thunk to send dispatch read messages updates to the store
+export const viewUnreadMessagesAsync = (body, id) => async (dispatch) => {
+  dispatch(setActiveChat(id));
+  try {
+    const data = await viewMessages(body);
+    dispatch(viewUnreadMessages(data));
+    socket.emit("message-recieved", {
+      updated: data.updated,
+    });
   } catch (error) {
     console.error(error);
   }

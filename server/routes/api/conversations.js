@@ -67,10 +67,31 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
-      convoJSON.messages.reverse();
-
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.messages.reverse();
+
+      //tag our messages so that we can determine the last message we sent to the other user
+      //also want to know if it isRead so we can do some conditional display
+
+      const myMessages = convoJSON.messages.filter(
+        (message) => message.senderId !== convoJSON.otherUser.id
+      );
+
+      const mylastMessageId = myMessages.length
+        ? myMessages[myMessages.length - 1].id
+        : null;
+
+      const isUnreadCount = await Message.count({
+        where: {
+          senderId: { [Op.eq]: convoJSON.otherUser.id },
+          conversationId: { [Op.eq]: convoJSON.id },
+          isRead: { [Op.eq]: false },
+        },
+      });
+
+      convoJSON.myLastMessageId = mylastMessageId;
+      convoJSON.isUnreadCount = isUnreadCount;
       conversations[i] = convoJSON;
     }
 

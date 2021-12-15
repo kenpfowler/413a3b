@@ -35,11 +35,14 @@ const ActiveChat = (props) => {
           />
           <Box className={classes.chatContainer}>
             <Messages
+              myLastMessageId={conversation.myLastMessageId}
+              latestMessageText={conversation.latestMessageText}
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user.id}
             />
             <Input
+              myLastMessageId={conversation.myLastMessageId}
               otherUser={conversation.otherUser}
               conversationId={conversation.id}
               user={user}
@@ -63,4 +66,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(ActiveChat);
+export default connect(mapStateToProps)(ActiveChat);
